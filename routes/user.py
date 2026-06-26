@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from schema.user import UserCreate, UserOut, UserLogIn
 from repository.user import create_an_asha_user, get_hashed_password, get_user_by_email # noqa
 from utils.logger import slogger
@@ -25,7 +25,7 @@ async def create_user(user: UserCreate):
 
 @router.post("/login")
 @limiter.limit("5/minute")
-async def login_admin(payload: UserLogIn):
+async def login_admin(request: Request, payload: UserLogIn):
     """Login and return JWT token"""
     hashed_password = await get_hashed_password(payload.Email)
     user = await get_user_by_email(payload.Email)
